@@ -1,0 +1,30 @@
+name: Create Instance
+on:
+  workflow_dispatch: # Esto activa el botón manual
+  schedule:
+    - cron: '0 */6 * * *' # Se ejecuta solo cada 6 horas
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Install dependencies
+        run: composer install
+      - name: Run script
+        run: php index.php
+        env:
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+          OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
+          OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
+          OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
+          OCI_PRIVATE_KEY_FILENAME: key.pem
+          OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
+          OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
+          OCI_OCPUS: 4
+          OCI_MEMORY_IN_GBS: 24
+          OCI_KEY_FILE: ${{ secrets.OCI_KEY_FILE }}
+        
