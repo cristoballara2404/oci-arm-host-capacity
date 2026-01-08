@@ -16,8 +16,11 @@ jobs:
         run: composer install
       - name: Create key file
         run: echo "${{ secrets.OCI_KEY_FILE }}" > key.pem
-      - name: Run script
-        run: php index.php
+      - - name: Run script
+        run: |
+          DECODED_SSH=$(echo "${{ secrets.OCI_SSH_PUBLIC_KEY }}" | base64 -d)
+          export OCI_SSH_PUBLIC_KEY="$DECODED_SSH"
+          php index.php
         env:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
@@ -26,7 +29,5 @@ jobs:
           OCI_PRIVATE_KEY_FILENAME: key.pem
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
-          OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           OCI_OCPUS: 4
           OCI_MEMORY_IN_GBS: 24
-          OCI_KEY_FILE: ${{ secrets.OCI_KEY_FILE }} 
